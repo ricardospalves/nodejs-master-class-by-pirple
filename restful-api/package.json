@@ -1,0 +1,13 @@
+{
+  "name": "restful-api",
+  "version": "1.0.0",
+  "description": "Node.js course from scratch without frameworks or any dependencies.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node --watch ./index.js"
+  },
+  "keywords": [],
+  "author": "Ricardo Alves <ricardospalves@gmail.com>",
+  "license": "MIT",
+  "type": "module"
+}
