@@ -1,3 +1,5 @@
 # 🐢🚀 The Node.js Master Class
 
-Course by [@pirple](https://github.com/pirple).
+Node.js course from scratch without frameworks or any dependencies.
+
+Course by [Pirple](https://www.pirple.com/).
