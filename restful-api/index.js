@@ -17,10 +17,14 @@ const server = createServer((request, response) => {
   // Get the HTTP method
   const method = request.method.toLowerCase();
 
+  // Get headers as an object
+  const headersObject = request.headers;
+
   // Log the request path
   console.log("Pathname:", trimedPathname);
   console.log("Method:", method);
-  console.log("Query", queryStringObject);
+  console.log("Query:", queryStringObject);
+  console.log("Headers:", headersObject);
 
   return response.end("Hello World!");
 });
