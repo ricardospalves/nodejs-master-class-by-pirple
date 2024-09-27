@@ -1,5 +1,6 @@
 import { createServer } from "node:http";
 import url from "node:url";
+import { StringDecoder } from "string_decoder";
 
 const PORT = 3000;
 
@@ -20,13 +21,26 @@ const server = createServer((request, response) => {
   // Get headers as an object
   const headersObject = request.headers;
 
-  // Log the request path
-  console.log("Pathname:", trimedPathname);
-  console.log("Method:", method);
-  console.log("Query:", queryStringObject);
-  console.log("Headers:", headersObject);
+  // Get the paylod, if any
+  const decoder = new StringDecoder("utf-8");
+  let buffer = "";
 
-  return response.end("Hello World!");
+  request.on("data", (chunk) => {
+    buffer += decoder.write(chunk);
+  });
+
+  request.on("end", () => {
+    buffer += decoder.end();
+
+    // Log the request path
+    console.log("Pathname:", trimedPathname);
+    console.log("Method:", method);
+    console.log("Query:", queryStringObject);
+    console.log("Headers:", headersObject);
+    console.log("Payload:", buffer);
+
+    return response.end("Hello World!");
+  });
 });
 
 server.listen(PORT, () => {
