@@ -1,8 +1,9 @@
 import { createServer } from "node:http";
 import url from "node:url";
-import { StringDecoder } from "string_decoder";
+import { StringDecoder } from "node:string_decoder";
+import config from "./config.js";
 
-const PORT = 3000;
+const PORT = config.port;
 
 // Define the handlers
 const handlers = {};
@@ -99,6 +100,9 @@ const server = createServer((request, response) => {
   });
 });
 
+// Start the server
 server.listen(PORT, () => {
-  console.log(`🚀 Server is running on http://localhost:${PORT}`);
+  console.log(
+    `🚀 Server is running on http://localhost:${PORT} in ${config.envName} mode`
+  );
 });
