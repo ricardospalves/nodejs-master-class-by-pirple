@@ -1,9 +1,12 @@
-import { createServer } from "node:http";
+import http from "node:http";
+import https from "node:https";
 import url from "node:url";
 import { StringDecoder } from "node:string_decoder";
+import fs from "node:fs";
 import config from "./config.js";
 
-const PORT = config.port;
+const HTTP_PORT = config.httpPort;
+const HTTPS_PORT = config.httpsPort;
 
 // Define the handlers
 const handlers = {};
@@ -28,7 +31,29 @@ const router = {
   sample: handlers.sample,
 };
 
-const server = createServer((request, response) => {
+// Instantiate the HTTP server
+const httpServer = http.createServer(unifiedServer);
+
+// Start the server
+httpServer.listen(HTTP_PORT, () => {
+  console.log(`🚀 Server is running on http://localhost:${HTTP_PORT}`);
+});
+
+// Instantiate the HTTPS server
+const httpsServerOptions = {
+  key: fs.readFileSync("./https/key.pem"),
+  cert: fs.readFileSync("./https/cert.pem"),
+};
+
+const httpsServer = https.createServer(httpsServerOptions, unifiedServer);
+
+// Start the https server
+httpsServer.listen(HTTPS_PORT, () => {
+  console.log(`🚀 Server is running on https://localhost:${HTTPS_PORT}`);
+});
+
+// All the server logic for both the http server
+function unifiedServer(request, response) {
   // Get the URL and parse it
   const parsedUrl = url.parse(request.url, true);
 
@@ -98,11 +123,4 @@ const server = createServer((request, response) => {
       console.log("Returning this response:", statusCode, payloadString);
     });
   });
-});
-
-// Start the server
-server.listen(PORT, () => {
-  console.log(
-    `🚀 Server is running on http://localhost:${PORT} in ${config.envName} mode`
-  );
-});
+}
