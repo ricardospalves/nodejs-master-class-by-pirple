@@ -11,12 +11,10 @@ const HTTPS_PORT = config.httpsPort;
 // Define the handlers
 const handlers = {};
 
-// Sample handler
-handlers.sample = (data, callback) => {
+// Ping handler
+handlers.ping = (data, callback) => {
   // Callback a http status code and a payload object
-  callback(406, {
-    name: "sample handler",
-  });
+  callback(200);
 };
 
 // Not found handler
@@ -28,7 +26,7 @@ handlers.notFound = (data, callback) => {
 
 // Define a request router
 const router = {
-  sample: handlers.sample,
+  ping: handlers.ping,
 };
 
 // Instantiate the HTTP server
