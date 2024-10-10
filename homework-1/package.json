@@ -1,0 +1,13 @@
+{
+  "name": "hello-world-restful-api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node --watch ./index.js"
+  },
+  "keywords": [],
+  "author": "Ricardo Alves <ricardospalves@gmail.com>",
+  "license": "MIT",
+  "description": "",
+  "type": "module"
+}
