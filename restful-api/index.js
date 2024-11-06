@@ -3,30 +3,17 @@ import https from "node:https";
 import url from "node:url";
 import { StringDecoder } from "node:string_decoder";
 import fs from "node:fs";
-import config from "./config.js";
+import config from "./lib/config.js";
+import { handlers } from "./lib/handlers.js";
+import { helpers } from "./lib/helper.js";
 
 const HTTP_PORT = config.httpPort;
 const HTTPS_PORT = config.httpsPort;
 
-// Define the handlers
-const handlers = {};
-
-// Ping handler
-handlers.ping = (data, callback) => {
-  // Callback a http status code and a payload object
-  callback(200);
-};
-
-// Not found handler
-handlers.notFound = (data, callback) => {
-  callback(404, {
-    message: "Route not found.",
-  });
-};
-
 // Define a request router
 const router = {
   ping: handlers.ping,
+  users: handlers.users,
 };
 
 // Instantiate the HTTP server
@@ -99,7 +86,7 @@ function unifiedServer(request, response) {
       queryStringObject,
       method,
       headersObject,
-      payload: buffer,
+      payload: helpers.parseJSONToObject(buffer),
     };
 
     // Route the request to the handler specified in the router

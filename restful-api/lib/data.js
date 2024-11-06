@@ -5,7 +5,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-export const lib = {
+export const data = {
   // Base directory of data folder
   get baseDirectory() {
     const __filename = fileURLToPath(import.meta.url);
