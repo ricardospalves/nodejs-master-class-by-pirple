@@ -95,6 +95,37 @@ handlers._users = {
       });
     });
   },
+
+  // users: GET
+  // Required data: phone
+  // Optional data: none
+  // @TODO Only let an authenticated user access their object. Don't let them access anyone else.
+  get(data, callback) {
+    // Check that the phone number is valid
+    const phone =
+      typeof data.queryStringObject.phone === "string" &&
+      data.queryStringObject.phone.trim().length === 10
+        ? data.queryStringObject.phone.trim()
+        : false;
+
+    if (!phone) {
+      return callback(400, {
+        error: "Missing required field.",
+      });
+    }
+
+    // Look up the user
+    _data.read("users", phone, (error, data) => {
+      if (error || !data) {
+        return callback(404);
+      }
+
+      // Remove the hashed password from the user object before returning it to the requester.
+      delete data.hashedPassword;
+
+      return callback(200, data);
+    });
+  },
 };
 
 // Ping handler
