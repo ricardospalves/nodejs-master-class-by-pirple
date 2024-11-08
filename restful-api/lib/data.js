@@ -4,6 +4,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { helpers } from "./helper.js";
 
 export const data = {
   // Base directory of data folder
@@ -56,7 +57,13 @@ export const data = {
       `${this.baseDirectory}/${directory}/${file}.json`,
       "utf-8",
       (error, data) => {
-        callback(error, data);
+        const parsedData = helpers.parseJSONToObject(data);
+
+        if (error && !data) {
+          return callback(error, data);
+        }
+
+        return callback(false, parsedData);
       }
     );
   },
