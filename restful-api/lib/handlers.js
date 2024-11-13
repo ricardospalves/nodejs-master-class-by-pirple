@@ -126,6 +126,86 @@ handlers._users = {
       return callback(200, data);
     });
   },
+
+  // user: PUT
+  // Required data: phone
+  // Optional data: firstName, lastName, password (at least one must br specified)
+  // @TODO only let an authenticated user update their own object. Don't let them update anyone else's.
+  put(data, callback) {
+    // Check for the required field
+    const phone =
+      typeof data.payload.phone === "string" &&
+      data.payload.phone.trim().length === 10
+        ? data.payload.phone.trim()
+        : false;
+
+    // Check for the optional fields
+    const firstName =
+      typeof data.payload?.firstName === "string" &&
+      data.payload.firstName.trim().length > 0
+        ? data.payload.firstName.trim()
+        : false;
+
+    const lastName =
+      typeof data.payload?.lastName === "string" &&
+      data.payload.lastName.trim().length > 0
+        ? data.payload.lastName.trim()
+        : false;
+
+    const password =
+      typeof data.payload?.password === "string" &&
+      data.payload.password.trim().length > 0
+        ? data.payload.password.trim()
+        : false;
+
+    // Error if phone is invalid
+    if (!phone) {
+      return callback(400, {
+        error: "Missing required field.",
+      });
+    }
+
+    if (!firstName && !lastName && !password) {
+      return callback(400, {
+        error: "Missing fields to update.",
+      });
+    }
+
+    // Look up the user.
+    _data.read("users", phone, (error, userData) => {
+      if (error || !userData) {
+        callback(404, {
+          error: "The specified user does not exist.",
+        });
+      }
+
+      // Update fields necessary.
+      if (firstName) {
+        userData.firstName = firstName;
+      }
+
+      if (lastName) {
+        userData.lastName = lastName;
+      }
+
+      if (password) {
+        userData.hashedPassword = helpers.hash(password);
+      }
+
+      // Store the new updates.
+      _data.update("users", phone, userData, (error, data) => {
+        if (error) {
+          console.log(error);
+
+          return callback(500, {
+            error: "Could not update the user.",
+          });
+        }
+
+        return callback(200);
+      });
+    });
+  },
 };
 
 // Ping handler
