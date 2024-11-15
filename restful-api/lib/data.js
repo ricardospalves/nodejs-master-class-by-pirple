@@ -118,6 +118,8 @@ export const data = {
         callback("Error deleting file.");
         return;
       }
+
+      return callback(false);
     });
   },
 };
