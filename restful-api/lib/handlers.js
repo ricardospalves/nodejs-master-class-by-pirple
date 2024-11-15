@@ -206,6 +206,36 @@ handlers._users = {
       });
     });
   },
+
+  // user: DELETE
+  // Required data: phome
+  // @TODO only let an authenticated user delete their object. Don't let them delete anyone else's.
+  // @TODO Cleanup (delete) any other data files associated with this user
+  delete(data, callback) {
+    // Check that the phone number is valid
+    const phone =
+      typeof data.queryStringObject.phone === "string" &&
+      data.queryStringObject.phone.trim().length === 10
+        ? data.queryStringObject.phone.trim()
+        : false;
+
+    if (!phone) {
+      return callback(400, {
+        error: "Missing required field.",
+      });
+    }
+
+    // Look up the user
+    _data.delete("users", phone, (error) => {
+      if (error) {
+        return callback(500, {
+          error: "Could not delete the specified user.",
+        });
+      }
+
+      return callback(200);
+    });
+  },
 };
 
 // Ping handler
