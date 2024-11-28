@@ -4,17 +4,11 @@ import url from "node:url";
 import { StringDecoder } from "node:string_decoder";
 import fs from "node:fs";
 import config from "./lib/config.js";
-import { handlers } from "./lib/handlers.js";
 import { helpers } from "./lib/helper.js";
+import { router } from "./lib/router/index.js";
 
 const HTTP_PORT = config.httpPort;
 const HTTPS_PORT = config.httpsPort;
-
-// Define a request router
-const router = {
-  ping: handlers.ping,
-  users: handlers.users,
-};
 
 // Instantiate the HTTP server
 const httpServer = http.createServer(unifiedServer);

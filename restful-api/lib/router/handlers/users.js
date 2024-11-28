@@ -1,23 +1,8 @@
-import { data as _data } from "./data.js";
-import { helpers } from "./helper.js";
-
-// Define the handlers
-
-const handlers = {};
-
-// Users handler
-handlers.users = (data, callback) => {
-  const acceptableMethods = ["post", "get", "put", "delete"];
-
-  if (acceptableMethods.includes(data.method)) {
-    handlers._users[data.method](data, callback);
-  } else {
-    callback(405);
-  }
-};
+import { data as _data } from "../../data.js";
+import { helpers } from "../../helper.js";
 
 // Container for the users submethods
-handlers._users = {
+const usersRouter = {
   // users: POST
   // Required data: firstName, lastName, phone, password, tosAgreement
   // Optional data: none
@@ -238,17 +223,12 @@ handlers._users = {
   },
 };
 
-// Ping handler
-handlers.ping = (data, callback) => {
-  // Callback a http status code and a payload object
-  callback(200);
-};
+export const users = (data, callback) => {
+  const acceptableMethods = ["post", "get", "put", "delete"];
 
-// Not found handler
-handlers.notFound = (data, callback) => {
-  callback(404, {
-    message: "Route not found.",
-  });
+  if (acceptableMethods.includes(data.method)) {
+    usersRouter[data.method](data, callback);
+  } else {
+    callback(405);
+  }
 };
-
-export { handlers };
