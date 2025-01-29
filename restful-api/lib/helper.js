@@ -29,4 +29,30 @@ export const helpers = {
       return {};
     }
   },
+
+  // Create a string of random alphanumeric characters, of a given length
+  createRandomString(stringLength) {
+    if (typeof stringLength !== "number" || stringLength <= 0) {
+      return false;
+    }
+
+    // Define all the possible characters that could go into a string
+    const possibleCharacters =
+      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+    // Start the final string
+    let string = "";
+
+    for (let i = 0; i < stringLength; i++) {
+      // Get a random character from the `possibleCharacters` string
+      const character = possibleCharacters.charAt(
+        Math.floor(Math.random() * possibleCharacters.length)
+      );
+
+      // Append this character to the final string
+      string += character;
+    }
+
+    return string;
+  },
 };
