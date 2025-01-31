@@ -47,7 +47,7 @@ function unifiedServer(request, response) {
   const method = request.method.toLowerCase();
 
   // Get headers as an object
-  const headersObject = request.headers;
+  const headers = request.headers;
 
   // Get the paylod, if any
   const decoder = new StringDecoder("utf-8");
@@ -64,7 +64,7 @@ function unifiedServer(request, response) {
     console.log("Pathname:", trimmedPathname);
     console.log("Method:", method);
     console.log("Query:", queryStringObject);
-    console.log("Headers:", headersObject);
+    console.log("Headers:", headers);
     console.log("Payload:", buffer);
 
     // Choose the handler this request should go to. Is one is not found, use the notFound handler
@@ -79,7 +79,7 @@ function unifiedServer(request, response) {
       trimmedPathname,
       queryStringObject,
       method,
-      headersObject,
+      headers,
       payload: helpers.parseJSONToObject(buffer),
     };
 
