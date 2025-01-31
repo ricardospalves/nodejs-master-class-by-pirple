@@ -183,6 +183,22 @@ const _tokens = {
   },
 };
 
+// Verify if a given token id is currently valid for a given user
+export const verifyToken = (id, phone, callback) => {
+  _data.read("tokens", id, (error, tokenData) => {
+    if (error || !tokenData) {
+      return callback(false);
+    }
+
+    // Check that the token is for the given user and has not expired
+    if (tokenData.phone !== phone || tokenData.eexpires <= Date.now()) {
+      callback(false);
+    }
+
+    callback(true);
+  });
+};
+
 export const tokens = (data, callback) => {
   const acceptableMethods = ["post", "get", "put", "delete"];
 

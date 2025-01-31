@@ -1,5 +1,6 @@
 import { data as _data } from "../../data.js";
 import { helpers } from "../../helper.js";
+import { verifyToken } from "./tokens.js";
 
 // Container for the users submethods
 const usersRouter = {
@@ -84,7 +85,6 @@ const usersRouter = {
   // users: GET
   // Required data: phone
   // Optional data: none
-  // @TODO Only let an authenticated user access their object. Don't let them access anyone else.
   get(data, callback) {
     // Check that the phone number is valid
     const phone =
@@ -98,6 +98,21 @@ const usersRouter = {
         error: "Missing required field.",
       });
     }
+
+    // Get the token from the HEADERS
+    const token =
+      typeof data.headers?.token === "string" ? data.headers.token : false;
+
+    console.log("[token]", data.headers);
+
+    // Verify that the given token is valid for the phone number
+    verifyToken(token, phone, (tokenIsValid) => {
+      if (!tokenIsValid) {
+        return callback(403, {
+          error: "Missing required token in headers or token is invalid.",
+        });
+      }
+    });
 
     // Look up the user
     _data.read("users", phone, (error, data) => {
@@ -115,7 +130,6 @@ const usersRouter = {
   // user: PUT
   // Required data: phone
   // Optional data: firstName, lastName, password (at least one must br specified)
-  // @TODO only let an authenticated user update their own object. Don't let them update anyone else's.
   put(data, callback) {
     // Check for the required field
     const phone =
@@ -156,38 +170,51 @@ const usersRouter = {
       });
     }
 
-    // Look up the user.
-    _data.read("users", phone, (error, userData) => {
-      if (error || !userData) {
-        callback(404, {
-          error: "The specified user does not exist.",
+    // Get the token from the HEADERS
+    const token =
+      typeof data.headers?.token === "string" ? data.headers.token : false;
+
+    // Verify that the given token is valid for the phone number
+    verifyToken(token, phone, (tokenIsValid) => {
+      if (!tokenIsValid) {
+        return callback(403, {
+          error: "Missing required token in headers or toke is invalid.",
         });
       }
 
-      // Update fields necessary.
-      if (firstName) {
-        userData.firstName = firstName;
-      }
-
-      if (lastName) {
-        userData.lastName = lastName;
-      }
-
-      if (password) {
-        userData.hashedPassword = helpers.hash(password);
-      }
-
-      // Store the new updates.
-      _data.update("users", phone, userData, (error, data) => {
-        if (error) {
-          console.log(error);
-
-          return callback(500, {
-            error: "Could not update the user.",
+      // Look up the user.
+      _data.read("users", phone, (error, userData) => {
+        if (error || !userData) {
+          callback(404, {
+            error: "The specified user does not exist.",
           });
         }
 
-        return callback(200);
+        // Update fields necessary.
+        if (firstName) {
+          userData.firstName = firstName;
+        }
+
+        if (lastName) {
+          userData.lastName = lastName;
+        }
+
+        if (password) {
+          userData.hashedPassword = helpers.hash(password);
+        }
+
+        // Store the new updates.
+        _data.update("users", phone, userData, (error, data) => {
+          if (error) {
+            console.log(error);
+
+            return callback(500, {
+              error: "Could not update the user.",
+            });
+          }
+
+          return callback(200);
+        });
       });
     });
   },
@@ -210,15 +237,28 @@ const usersRouter = {
       });
     }
 
-    // Look up the user
-    _data.delete("users", phone, (error) => {
-      if (error) {
-        return callback(500, {
-          error: "Could not delete the specified user.",
+    // Get the token from the HEADERS
+    const token =
+      typeof data.headers?.token === "string" ? data.headers.token : false;
+
+    // Verify that the given token is valid for the phone number
+    verifyToken(token, phone, (tokenIsValid) => {
+      if (!tokenIsValid) {
+        return callback(403, {
+          error: "Missing required token in headers or toke is invalid.",
         });
       }
 
-      return callback(200);
+      // Look up the user
+      _data.delete("users", phone, (error) => {
+        if (error) {
+          return callback(500, {
+            error: "Could not delete the specified user.",
+          });
+        }
+
+        return callback(200);
+      });
     });
   },
 };
