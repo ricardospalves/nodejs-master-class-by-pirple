@@ -70,7 +70,7 @@ function unifiedServer(request, response) {
     // Choose the handler this request should go to. Is one is not found, use the notFound handler
     const chosenHandler = router[trimmedPathname]
       ? router[trimmedPathname]
-      : handlers.notFound;
+      : router.notFound;
 
     console.log("[chosen]", chosenHandler);
 
