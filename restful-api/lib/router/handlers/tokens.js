@@ -202,8 +202,6 @@ export const verifyToken = (id, phone, callback) => {
 export const tokens = (data, callback) => {
   const acceptableMethods = ["post", "get", "put", "delete"];
 
-  console.log("[token]", data.method);
-
   if (!acceptableMethods.includes(data.method)) {
     return callback(405);
   }
