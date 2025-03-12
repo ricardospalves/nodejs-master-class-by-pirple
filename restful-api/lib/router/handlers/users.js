@@ -112,18 +112,18 @@ const usersRouter = {
           error: "Missing required token in headers or token is invalid.",
         });
       }
-    });
 
-    // Look up the user
-    _data.read("users", phone, (error, data) => {
-      if (error || !data) {
-        return callback(404);
-      }
+      // Look up the user
+      _data.read("users", phone, (error, data) => {
+        if (error || !data) {
+          return callback(404);
+        }
 
-      // Remove the hashed password from the user object before returning it to the requester.
-      delete data.hashedPassword;
+        // Remove the hashed password from the user object before returning it to the requester.
+        delete data.hashedPassword;
 
-      return callback(200, data);
+        return callback(200, data);
+      });
     });
   },
 
