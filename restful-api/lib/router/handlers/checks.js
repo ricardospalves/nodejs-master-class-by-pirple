@@ -1,6 +1,7 @@
 import { data as _data } from "../../data.js";
 import config from "../../config.js";
 import { helpers } from "../../helper.js";
+import { verifyToken } from "./tokens.js";
 
 // Container for all the check methods
 const _checks = {
@@ -117,7 +118,54 @@ const _checks = {
     });
   },
 
-  get() {},
+  /**
+   * Checks - GET
+   *
+
+   *
+   * @param {Object} data
+   * @param {string} data.id id of check
+   * @param {errorCallbak} callback
+   */
+  get(data, callback) {
+    // Check that the id number is valid
+    const id =
+      typeof data.queryStringObject.id === "string" &&
+      data.queryStringObject.id.trim().length === 20
+        ? data.queryStringObject.id.trim()
+        : false;
+
+    if (!id) {
+      return callback(400, {
+        error: "Missing required field.",
+      });
+    }
+
+    // Lookup the check
+    _data.read("checks", id, (error, checkData) => {
+      if (error || !checkData) {
+        return callback(404);
+      }
+
+      // Get the token from the HEADERS
+      const token =
+        typeof data.headers?.token === "string" ? data.headers.token : false;
+
+      // Verify that the given token is valid and belongs to the user who
+      // created check.
+      return verifyToken(token, checkData.userPhone, (tokenIsValid) => {
+        if (!tokenIsValid) {
+          return callback(403, {
+            error: "Missing required token in headers or token is invalid.",
+          });
+        }
+
+        // Return the check data
+        return callback(200, checkData);
+      });
+    });
+  },
+
   put() {},
   delete() {},
 };
